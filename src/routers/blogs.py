@@ -12,11 +12,9 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def create(request: schemas.InsertBlog, db=Database.session()):
     return BlogRepository.create(request, db)
-
 
 @router.get("/", response_model=List[schemas.Blog])
 def all(
@@ -25,16 +23,13 @@ def all(
 ):
     return BlogRepository.all(current_user, db)
 
-
 @router.get("/{id}", response_model=schemas.Blog)
 def show(id: str, db=Database.session()):
     return BlogRepository.show(id, db)
 
-
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete(id: str, db=Database.session()):
     return BlogRepository.delete(id, db)
-
 
 @router.put("/{id}", status_code=status.HTTP_202_ACCEPTED)
 def update(id: str, request: schemas.InsertBlog, db=Database.session()):
