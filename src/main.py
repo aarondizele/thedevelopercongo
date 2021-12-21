@@ -9,8 +9,11 @@ from .database import Database
 Database.init()
 
 app = FastAPI(
+    docs_url="/openapi",
+    redoc_url="/openapi_redoc",
     title="The Developers Congo",
-    description="This is an OpenAPI for The Developers Congo Platform"
+    description="This is an OpenAPI for The Developers Congo Platform",
+    version="1.0.1"
 )
 
 app.include_router(authenticate.router)
