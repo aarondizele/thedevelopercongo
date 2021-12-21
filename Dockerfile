@@ -1,12 +1,7 @@
 FROM python:3.9-slim
 
-COPY ./src /app/src
-COPY ./requirements.txt /app
+ADD requirements.txt .
 
-WORKDIR /app
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-RUN pip install -r requirements.txt
-
-EXPOSE 8000
-
-CMD ["uvicorn", "src.main:app", "--host=0.0.0.0", "--reload"]
+CMD ["uvicorn", "src.main:app", "--reload", "--host", "0.0.0.0", "--port", "80"]

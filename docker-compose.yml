@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    container_name: thedevelopercongo-build-1.0
+    ports:
+      - 8000:80
+    volumes:
+      - ./src:/src

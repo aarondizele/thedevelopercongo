@@ -20,7 +20,6 @@ Base = declarative_base()
 class Database:
     def init():
         models.Base.metadata.create_all(bind=engine)
-    
 
     def session():
         def get_db():
