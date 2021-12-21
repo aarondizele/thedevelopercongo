@@ -1,15 +1,29 @@
-import databases
-import sqlalchemy
-from functools import lru_cache
-from src import config
+from fastapi import Depends
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 
-#1. Using Pydantic to load .env configuration
-@lru_cache()
-def setting():
-    return config.Settings()
+from src import models
 
-def database_pgsql_url_config():
-    return str(setting().DB_CONNECTION + "://" + setting().DB_USERNAME + ":" + setting().DB_PASSWORD + "@" + setting().DB_HOST + ":" + setting().DB_PORT + "/" + setting().DB_DATABASE)
+SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:username@localhost/youtube'
 
-database = databases.Database(database_pgsql_url_config)
-engine = sqlalchemy.create_engine(database_pgsql_url_config())
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
+
+class Database:
+    def init():
+        models.Base.metadata.create_all(bind=engine)
+
+    def session():
+        def get_db():
+            db = SessionLocal()
+            try:
+                yield db
+            finally:
+                db.close()
+
+        db: Session = Depends(get_db)
+        return db

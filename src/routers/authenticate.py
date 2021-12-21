@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Optional
-from .. import schemas, models, oauth2, keys
-from ..database import Database
-from ..hashing import Hash
+from src import schemas, models, oauth2, keys
+from src.database import Database
+from src.hashing import Hash
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 

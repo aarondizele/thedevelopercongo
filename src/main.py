@@ -1,9 +1,9 @@
 # import uvicorn
 from fastapi import Depends, FastAPI, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import users, blogs, authenticate
-from . import models, schemas
-from .database import Database
+from src.routers import users, blogs, authenticate
+from src import models, schemas
+from src.database import Database
 
 # Create Database Tables
 Database.init()
@@ -33,6 +33,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event('startup')
+async def startup():
+    pass # await database.connect()
+
+@app.on_event('shutdown')
+async def shutdown():
+    pass # await database.disconnect()
 
 # if task_id not in tasks:
 #   tasks[task_id] = "This did'nt exist before"

@@ -1,7 +1,6 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
-
 class ShowBlog(BaseModel):
     id: str
     title: str
@@ -19,12 +18,10 @@ class User(BaseModel):
     class Config:
         orm_mode = True
 
-
 class InsertBlog(BaseModel):
     title: str
     description: Optional[str] = None
     # published: Optional[bool] = True
-
 
 class Blog(BaseModel):
     id: str
@@ -34,13 +31,11 @@ class Blog(BaseModel):
     class Config:
         orm_mode = True
 
-
 # class ShowBlog(Blog):
 #     id: Optional[str]
 
 #     class Config():
 #         orm_mode = True
-
 
 class Item(BaseModel):
     name: str
@@ -49,18 +44,15 @@ class Item(BaseModel):
     tax: Optional[float] = None
     tags: List[str] = []
 
-
 class Signup(BaseModel):
     firstname: str
     lastname: str
     email: str
     password: str
 
-
 class Login(BaseModel):
     email: str
     password: str
-
 
 class Token(BaseModel):
     access_token: str

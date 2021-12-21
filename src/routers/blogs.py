@@ -1,9 +1,10 @@
 from fastapi import APIRouter, status, Depends
 from typing import List, Optional
-from .. import models, schemas, oauth2
-from ..hashing import Hash
-from ..database import Database
-from ..repositories.blogs import BlogRepository
+from src import models, schemas, oauth2
+from src.hashing import Hash
+from src.database import Database
+from src.repositories.blogs import BlogRepository
+
 
 router = APIRouter(
     prefix="/blogs",

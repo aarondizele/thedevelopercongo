@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import Session
 
-from . import models
+from src import models
 
 SQLALCHEMY_DATABASE_URL = 'sqlite:///./thedevelopercongo.db'
 # SQLALCHEMY_DATABASE_URL = 'postgresql://user:password@postgresserver/db'

@@ -1,8 +1,12 @@
 fastapi
 uvicorn
-databases
 sqlalchemy
+alembic
 pydantic
+pydantic[dotenv]
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
+asyncpg
+psycopg2
+starlette

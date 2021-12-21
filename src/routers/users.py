@@ -1,9 +1,9 @@
 from typing import List
 from fastapi import APIRouter, status, UploadFile, File
-from .. import models, schemas
-from ..hashing import Hash
-from ..database import Database
-from ..repositories.users import UserRepository
+from src import models, schemas
+from src.hashing import Hash
+from src.database import Database
+from src.repositories.users import UserRepository
 
 router = APIRouter(
     prefix="/users",

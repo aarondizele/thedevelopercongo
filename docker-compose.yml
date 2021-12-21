@@ -7,3 +7,5 @@ services:
       - 8000:80
     volumes:
       - ./src:/src
+    env_file:
+      - ./src/.env 

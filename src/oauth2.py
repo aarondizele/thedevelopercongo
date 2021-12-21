@@ -1,15 +1,13 @@
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Optional
-from . import schemas, models, keys
-from .database import Database
-from .hashing import Hash
+from src import schemas, models, keys
+from src.database import Database
+from src.hashing import Hash
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db=Database.session()):
     credentials_exception = HTTPException(
@@ -31,7 +29,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db=Database.sess
     if user is None:
         raise credentials_exception
     return user
-
 
 async def get_current_active_user(current_user: schemas.User = Depends(get_current_user)):
     # if current_user.disabled:

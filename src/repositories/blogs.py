@@ -1,8 +1,8 @@
 from fastapi import status, HTTPException
 from typing import List, Optional
-from .. import models, schemas
-from ..hashing import Hash
-from ..database import Database
+from src import models, schemas
+from src.hashing import Hash
+from src.database import Database
 
 
 class BlogRepository:
