@@ -8,7 +8,10 @@ from .database import Database
 # Create Database Tables
 Database.init()
 
-app = FastAPI()
+app = FastAPI(
+    title="The Developers Congo",
+    description="This is an OpenAPI for The Developers Congo Platform"
+)
 
 app.include_router(authenticate.router)
 app.include_router(blogs.router)
@@ -26,9 +29,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-
 
 
 # if task_id not in tasks:
