@@ -7,7 +7,7 @@ from src.repositories.blogs import BlogRepository
 
 
 router = APIRouter(
-    prefix="/blogs",
+    prefix="/v1/blogs",
     tags=["Blogs"],
     responses={404: {"description": "Not found"}},
 )

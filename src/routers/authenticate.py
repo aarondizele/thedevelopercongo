@@ -25,7 +25,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-@router.post("/login")
+@router.post("/v1/login")
 def login(request: OAuth2PasswordRequestForm = Depends(), db=Database.session()):
     user = db.query(models.User).filter(models.User.email == request.username).first()
     if not user:
@@ -48,6 +48,6 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db=Database.session())
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get('/user/me', response_model=schemas.User, response_model_exclude={"blogs"})
+@router.get('/v1/user/me', response_model=schemas.User, response_model_exclude={"blogs"})
 async def get_current_user(current_user: schemas.User = Depends(oauth2.get_current_active_user)):
     return current_user
