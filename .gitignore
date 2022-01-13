@@ -1,6 +1,8 @@
 __pycache__
-Include
-Scripts
-Lib
-files
+bin/
+Include/
+Scripts/
+Lib/
+files/
 thedevelopercongo.db
+pyvenc.cfg
