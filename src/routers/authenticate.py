@@ -15,6 +15,7 @@ router = APIRouter(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    print(data.dict())
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta

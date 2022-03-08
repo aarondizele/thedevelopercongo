@@ -1,0 +1,112 @@
+from fastapi import APIRouter, Body, Request, status, HTTPException
+from typing import List
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
+import base64
+from datetime import datetime
+import hashlib
+import os
+from os import path, getcwd
+from api.models import ArchiveModel, UpdateArchiveModel
+
+router = APIRouter(
+    tags=['Archives'],
+    prefix="/v1/archives",
+    responses={404: {"description": "Not found"}},
+)
+
+current_directory = getcwd() + "/uploads/"
+
+
+
+@router.post("/", response_description="Add new archive", response_model=ArchiveModel)
+async def create_archive(archive: ArchiveModel = Body(...)):
+    archive = jsonable_encoder(archive)
+    new_archive = await db["archives"].insert_one(archive)
+    created_archive = await db["archives"].find_one({ "_id": new_archive.inserted_id })
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_archive)
+
+
+
+@router.get("/", response_description="List of archives", response_model=List[ArchiveModel])
+async def list_archives():
+    archives = await db["archives"].find().to_list(1000)
+    return archives
+
+
+
+@router.get("/{id}", response_description="Get a single archive", response_model=ArchiveModel)
+async def show_archive(id: str):
+    if (archive := await db["archives"].find_one({"_id": id})) is not None:
+        return archive
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Archive {id} not found")
+
+
+
+@router.put("/{id}", response_description="Update an archive", response_model=ArchiveModel)
+async def update_archive(id: str, archive: UpdateArchiveModel = Body(...)):
+    archive = {k: v for k, v in archive.dict().items() if v is not None}
+
+    if len(archive) >= 1:
+        update_result = await db["archives"].update_one({"_id": id}, {"$set": archive})
+
+        if update_result.modified_count == 1:
+            if (
+                updated_archive := await db["archives"].find_one({"id": id})
+            ) is not None:
+                return updated_archive
+
+    # If any values are provided
+    if (existing_archive := await db["archives"].find_one({"_id": id})) is not None:
+        return existing_archive
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Archive {id} not found")
+
+
+@router.delete("/{id}", response_description="Delete an archive")
+async def delete_archive(id: str):
+    delete_result = await db["archives"].delete_one({"_id": id})
+
+    if delete_result.deleted_count == 1:
+        return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
+
+    raise HTTPException(status_code=404, detail=f"Archive {id} not found")
+
+
+@router.post("/upload", status_code=status.HTTP_200_OK)
+async def upload(name: str, size: str, currentChunkIndex: str, totalChunks: str, req: Request, file: str = Body(...)):
+
+    try:
+        firstChunk = int(currentChunkIndex) == 0
+        lastChunk = int(currentChunkIndex) == int(totalChunks) - 1
+
+        ext = name.split('.').pop()
+        data = file.split(',')[1]
+
+        buffer = base64.b64decode(data)
+
+        tmpFilename = f"tmp_{hashlib.md5(name.encode('utf-8')).hexdigest()}.{ext}"
+        tmpFilePath = current_directory + tmpFilename
+        tmpFileExists = path.exists(tmpFilePath)
+
+        if firstChunk and tmpFileExists:
+            os.unlink(tmpFilePath)
+
+        with open(tmpFilePath, "ab") as f:
+            f.write(buffer)
+            f.close()
+
+        if lastChunk:
+            finalFilename = f"{hashlib.md5(str(datetime.now()).encode('utf-8')).hexdigest()}.{ext}"
+            finalFilePath = path.join(current_directory, finalFilename)
+            os.rename(tmpFilePath, finalFilePath)
+
+            return {"finalFilename": finalFilename}
+
+        return {"message": "OK"}
+
+    except Exception as e:
+        return JSONResponse(content="Server error", status_code=status.HTTP_403_FORBIDDEN)
